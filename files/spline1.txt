@@ -1,0 +1,77 @@
+# This file contains a series of control points for you to read in for defining splines.
+# The file has the following structure:
+# One integer denoting the number of splines ("nSplines") defined within the file.
+# 1
+# For each spline:
+# One integer denoting the number of control points for this spline.
+# 12
+# One float denoting the number of seconds over which to move the object from start to finish.
+# 10.0
+# For each point:
+#   Three floats denoting X, Y, Z position.
+# 0.0, 0.0, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+# 0.0, 0.0, 0.0
+#
+# Repeat for each spline.
+# --------------------------------------
+#
+# One integer denoting the number of splines ("nSplines") defined within the file.
+1
+
+# For each spline:
+# One integer denoting the number of control points for this spline.
+9
+# One float denoting the number of seconds over which to move the object from start to finish.
+0.75
+# For each point:
+#   Three floats denoting X, Y, Z position.
+0.0, 2.0, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+# Control point 1
+#   Three floats denoting X, Y, Z position.
+0.0, 2.0, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+#
+# Control point 5
+#   Three floats denoting X, Y, Z position.
+0.0, 1.75, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+#
+# Control point 2
+#   Three floats denoting X, Y, Z position.
+0.0, 1, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+#
+# Control point 4
+#   Three floats denoting X, Y, Z position.
+0.0, 0.0, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+#
+# Control point 5
+#   Three floats denoting X, Y, Z position.
+0.0, 1, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+#
+# Control point 5
+#   Three floats denoting X, Y, Z position.
+0.0, 1.75, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+# Control point 5
+#   Three floats denoting X, Y, Z position.
+0.0, 2.0, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+#   Three floats denoting X, Y, Z position.
+0.0, 2.0, 0.0
+#   Three floats denoting XRot, YRot, ZRot Euler angles for orientation.
+0.0, 0.0, 0.0
+
+

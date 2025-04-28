@@ -1,34 +1,59 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>WebGL Obstacle Avoidance</title>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebGL Example File</title>
+
+      <script id="vshader" type="x-shader/x-vertex">
+          precision mediump float;
+          uniform mat4 modelMatrix;
+          uniform mat4 cameraMatrix;
+          uniform mat4 projectionMatrix;
+
+          attribute vec4 vPosition;
+
+          void main()
+          {
+             gl_Position = projectionMatrix * cameraMatrix * modelMatrix * vPosition;
+
+          }
+      </script>
+
+      <script id="fshader" type="x-shader/x-fragment">
+          precision mediump float;
+          uniform vec4 color;
 
 
-    <script id="vertex-shader" type="x-shader/x-vertex">
-        attribute vec4 vPosition;
-        uniform mat4 modelMatrix;
+          void main()
+          {
+             gl_FragColor = color;
+          }
+      </script>
 
-        void main() {
-            gl_Position = modelMatrix * vPosition;
-        }
-    </script>
+      <script src="lib/webgl-utils.js"></script>
+      <script src="lib/initShaders.js"></script>
+      <script src="lib/MV.js"></script>
+      <script type = "module" src="main.js"></script>
 
-    <script id="fragment-shader" type="x-shader/x-fragment">
-        precision mediump float;
+  </head>
+ 
+  <body>
+  <script type="module">
+      import { main } from './main.js'; // load main
+      document.addEventListener('DOMContentLoaded', main);
+  </script>
 
-        void main() {
-            gl_FragColor = vec4(0.2, 0.4, 0.8, 1.0);
-        }
-    </script>
-    <script src="lib/webgl-utils.js"></script>
-    <script src="lib/initShaders.js"></script>
-    <script src="lib/MV.js"></script>
-    <script src="example.js"></script>
-</head>
-<body>
-    <canvas id="gl-canvas" width="512" height="512">
-        Oops ... your browser doesn't support the HTML5 canvas element
+  <h3> To see animation, upload spline attached to the project in files!</h3>
+  
+    <canvas id="webgl" width="550" height="550">
+    Please use a browser that supports the "canvas" tag.
     </canvas>
-</body>
+
+  <form id="fileupload" enctype="multipart/form-data">
+    <input type="file" id="files" name="files[]" />
+  </form>
+
+
+
+  </body>
 </html>
