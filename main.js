@@ -106,10 +106,10 @@ function parseSplines(reader) {
         if (fileString.charAt(i) === '#')
             ignore = true;
 
-        if (!ignore && fileString.charAt(i) !== '\n')
+        if (!ignore && (fileString.charAt(i) !== '\n' && fileString.charAt(i) !== '\r'))
             currentLine = currentLine.concat(fileString.charAt(i));
 
-        if (fileString.charAt(i) === '\n') {
+        if (fileString.charAt(i) === '\n' || fileString.charAt(i) === '\r') {
             ignore = false;
             if (currentLine !== "")
                 lines.push(currentLine);
