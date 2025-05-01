@@ -3,6 +3,7 @@ import {Renderable} from './Renderable.js';
 
 //global id to ensure no object ever has the same id and to differentiate them
 let id = 0
+let objects = []
 
 //class for hierarchical relationships
 class Obj
@@ -63,6 +64,27 @@ class Obj
     }
 
 
+
+
 }
 
-export{Obj};
+//deletes an object from array and all of its children
+function deleteObject(id)
+{
+    let newObjects = [];
+
+    for(let i =0; i < objects.length; i++)
+    {
+        if(objects[i].id !== id)
+            newObjects.push(objects[i]);
+        else
+        {
+            for(let j =0; j < objects[i].children.length; j++)
+                deleteObject(objects[i].children[j].id)
+        }
+    }
+    objects = newObjects;
+
+}
+
+export{Obj, objects, deleteObject};
