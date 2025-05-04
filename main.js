@@ -180,8 +180,8 @@ function animate()
         deltaTime = 0.0;
     lastTime = time;
 
-    // splineTime += deltaTime;
 
+    //Animate boat rocking
     theta += 0.01;
 
     let r1 = rotateX(Math.sin(theta) * 5);
@@ -190,8 +190,10 @@ function animate()
     ship.trans.setRotMat(mult(mult(r1, r2), rotateY(0)));
     ship.trans.move(vec3(0.0, Math.cos(theta-2.0)/500, 0.0));
 
+    //Set cannon position
     cannon.trans.setRotMat(mult(rotateZ(-pitch), rotateX(angle)));
 
+    //Animate cannonball
     if (ballLaunched) {
         cannonball.trans.move(scale(deltaTime * 10, ballVel));
         ballVel[1] -= 1.5 * deltaTime;

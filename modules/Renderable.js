@@ -28,6 +28,8 @@ class Renderable {
         this.change(vertices);
         this.drawMode = gl.TRIANGLES;
         this.color = color;
+
+        //Allows shaders to animate with time
         if (this.shaderProgram !== program) {
             this.startTime = performance.now();
         }
@@ -90,6 +92,7 @@ class Renderable {
         pushUniformMat(cameraMatrix, "cameraMatrix", this.shaderProgram);
         pushUniformVec4(this.color, "color", this.shaderProgram);
 
+        //Allows shaders to animate with time
         if (this.shaderProgram !== program) {
             let time = Math.sin((performance.now() - this.startTime) / 300);
             let timeLoc = gl.getUniformLocation(this.shaderProgram, "time");
