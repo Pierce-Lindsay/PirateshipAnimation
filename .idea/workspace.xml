@@ -6,12 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="9e8ac29e-3046-4c2d-9a23-1192e90880dc" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example.html" beforeDir="false" afterPath="$PROJECT_DIR$/example.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/Animals.js" beforeDir="false" afterPath="$PROJECT_DIR$/modules/Animals.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/Object.js" beforeDir="false" afterPath="$PROJECT_DIR$/modules/Object.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/Renderable.js" beforeDir="false" afterPath="$PROJECT_DIR$/modules/Renderable.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/Skeleton.js" beforeDir="false" afterPath="$PROJECT_DIR$/modules/Skeleton.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/Transformer.js" beforeDir="false" afterPath="$PROJECT_DIR$/modules/Transformer.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -79,5 +76,16 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

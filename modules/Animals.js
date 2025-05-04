@@ -7,6 +7,7 @@ import {Transform, Projection} from "./Transformer.js";
 import {Obj, objects, deleteObject} from "./Object.js";
 import {Skeleton} from "./Skeleton.js";
 
+
 let WING_ROTATIONS =[
     [0, 0, 0, 0, 0],
     [20, 30, 50, 60, 80],
@@ -15,6 +16,32 @@ let WING_ROTATIONS =[
     [-30, -40, -60, -80, -100],
     [-20, -30, -50, -60, -80],
     [0, 0, 0, 0, 0]];
+
+
+
+/*
+let WING_ROTATIONS =[
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 45],
+    [0, 0, 0, 45, 45],
+    [0, 0, 45, 45, 45],
+    [0, 45, 45, 45, 45],
+    [45, 45, 45, 45, 45],
+    [45, 45, 45, 45, 0],
+    [45, 45, 45, 0, 0],
+    [45, 45, 0, 0,0],
+    [45, 0, 0, 0, -45],
+    [0, 0, 0, -45,-45],
+    [0, 0, -45, -45,-45],
+    [0, -45, -45, -45,-45],
+    [-45, -45,-45, -45, -45],
+    [-45,-45, -45, -45, 0],
+    [-45,-45, -45, 0, 0],
+    [-45,-45, 0, 0, 0],
+    [-45,0, 0, 0, 0],
+    [0,0, 0, 0, 0]]
+
+ */
 
 const WING_SEG1_SCALE = vec3(0.6, 0.25, 0.4)
 const WING_SEG2_SCALE = vec3(1.1, 0.2, 0.6)
@@ -136,6 +163,8 @@ function createCharacterFeature(parent, color, vertices, pos, scale, rotation, r
     let feature = new Obj(r, t, parent);
     if(parent != null)
         parent.addChild(feature);
+
+
     
     return feature;
 }
@@ -158,7 +187,8 @@ const X_MAX = 15;
 const Z_MIN = -15;
 const Z_MAX = 20;
 
-
+const FISH_JUMP_STRENGTH = 11;
+const FISH_GRAVITY = 35;
 //visionconstants
 const VISION = 0.4
 
@@ -170,15 +200,16 @@ let birds = [];
 let obstacles = [];
 
 //deletes a particle from the array and corresponsing object
-function deleteBird(id) {
-    let newBirds = [];
-    for(let i= 0; i < birds.length; ++i)
-    {
-        if(birds[i].obj.id !== id)
-            newBirds.push(birds[i]);
-    }
-    birds= newBirds;
+function deleteParticle(id, array) {
+    let newArray = [];
     deleteObject(id);
+    for(let i= 0; i < array.length; ++i)
+    {
+        if(array[i].obj.id !== id)
+            newArray.push(array[i]);
+    }
+    array= newArray;
+    return array;
 }
 
 
@@ -424,7 +455,7 @@ class Bird {
     {
         if(this.checkIfBirdShouldDespawn(camPos))
         {
-            deleteBird(this.obj.id)
+            birds = deleteParticle(this.obj.id, birds)
             return true;
         }
         return false;
@@ -491,6 +522,138 @@ class BoundingSphere {
         return this.radiusMultiplierFromParent;
     }
 
+}
+
+let fishies = []
+
+class Fish
+{
+    constructor(speedScaler, dir, initPos) {
+        this.speed = speedScaler;
+        this.pos = initPos;
+        this.velocity = vec3(dir * this.speed, 0, 0);
+        this.jumping = false;
+
+        let CUBE_VERTS = createCube()[0];
+        let NORMAL_SCALE = vec3(1,1,1);
+        //initialize corresponding things for rendering and hierarchies
+
+       // console.log("fish made")
+        
+        
+        //console.log(this.velocity)
+
+
+        this.obj = createCharacterFeature(null,    vec4(0.5, 0.6, 0.5, 1.0), structuredClone(CUBE_VERTS), this.pos, scale(0.1, NORMAL_SCALE), 0, vec3(0, 0, 1));
+        let stf = createCharacterFeature(this.obj,     vec4(0.5, 0.7, 0.5, 1.0), structuredClone(CUBE_VERTS), vec3(0.5, -0.5, 0.5), vec3(1, 1, 0.1), 45, vec3(0, 0, 1));
+        let stf2 = createCharacterFeature(this.obj,     vec4(0.5, 0.7, 0.5, 1.0), structuredClone(CUBE_VERTS), vec3(0.5, -0.5, -0.5), vec3(1, 1, 0.1), 45, vec3(0, 0, 1));
+        let tf = createCharacterFeature(this.obj, vec4(0.5, 0.7, 0.5, 1.0), structuredClone(CUBE_VERTS), vec3(0.25, 0.3, 0), vec3(1, 1, 0.1), 45, vec3(0, 0, 1));
+        let s2 = createCharacterFeature(this.obj,     vec4(0.5, 0.8, 0.5, 1.0), structuredClone(CUBE_VERTS), vec3(1, 0, 0), vec3(1, 1, 1), 0, vec3(0, 0, 1));
+        let h = createCharacterFeature(s2,     vec4(0.5, 0.9, 0.5, 1.0), structuredClone(CUBE_VERTS), vec3(0.75, 0.1, 0), scale(0.8, vec3(1, 1, 1)), 0, vec3(0, 0, 1));
+        let e1 = createCharacterFeature(h, vec4(0.1, 0.1, 0.1, 1.0), structuredClone(CUBE_VERTS), vec3(0.25, 0.35, 0.45), scale(0.4, vec3(1, 1, 1)), 0, vec3(0, 0, 1));
+        let e2 = createCharacterFeature(h, vec4(0.1, 0.1, 0.1, 1.0), structuredClone(CUBE_VERTS), vec3(0.25, 0.35, -0.45), scale(0.4, vec3(1, 1, 1)), 0, vec3(0, 0, 1));
+        let b1 = createCharacterFeature(this.obj, vec4(0.3, 0.3, 0.3, 1.0), structuredClone(CUBE_VERTS), vec3(-0.75, 0, 0), vec3(0.7, 0.7, 0.3), 0, vec3(0, 0, 1));
+        let b2 = createCharacterFeature(b1, vec4(0.3, 0.3, 0.3, 1.0), structuredClone(CUBE_VERTS), vec3(-0.2, 0, 0), vec3(1.2, 1.2, 0.3), 45, vec3(0, 0, 1));
+        objects.push(this.obj)
+    }
+
+    checkDespawn(camPos)
+    {
+        if(this.pos[0] >( camPos[0] + X_MAX )|| this.pos[0] < (camPos[0] + X_MIN))
+        {
+                fishies = deleteParticle(this.obj.id, fishies)
+                return true;
+        }
+    return false;
+    }
+
+    jumpLogic(deltaTime)
+    {
+        if(!this.jumping)
+        {
+            let x = genUniformRand(1, 2);
+            if(x > 1.9)
+            {
+                console.log("here" + x)
+                // dd positive velicty component
+                this.velocity[1] = FISH_JUMP_STRENGTH
+                this.jumping = true;
+
+            }
+            else
+                this.jumping = false
+        }
+        else if(this.jumping)
+        {
+            this.velocity[1] -= FISH_GRAVITY * deltaTime ;
+
+            if(this.pos[1] <= WATER_LEVEL-0.5)
+            {
+                this.pos[1] = WATER_LEVEL -0.5;
+                this.obj.trans.setPos(this.pos)
+                this.jumping = false;
+                this.velocity[1] = 0;
+            }
+        }
+
+    }
+
+
+    //function for rotating the head to be aligned with dir of velocity
+    alignHeadWithVelocity()
+    {
+        //get angle of velocity vector, head is default facing up which means 90 degree ahead, s
+        // o vector aiming 90 degrees should be 0(subtract 90)
+
+        //actually doesn't matter whether normal or not
+        let rot = 0;
+        if(this.velocity[0] === 0)
+        {
+            //undefined
+            if(this.velocity[1] > 0)
+                rot = 90;
+            else
+                rot = 270;
+        }
+        else
+        {
+            //get the absolute value and then figure out what quadrant we're in
+            let theta = (180 * Math.atan(Math.abs(this.velocity[1]/this.velocity[0])))/Math.PI;
+
+            if(this.velocity[0] > 0 && this.velocity[1] >= 0)
+                rot = theta;
+            else if(this.velocity[0] < 0 && this.velocity[1] >= 0)
+                rot = 180 -theta;
+            else if(this.velocity[0] < 0 && this.velocity[1] < 0)
+                rot = 180 +theta;
+            else if(this.velocity[0] > 0 && this.velocity[1] < 0)
+                rot = 360 - theta;
+
+        }
+
+
+        //subtract by 90 cause default head position is facing up
+        this.obj.trans.setRotAxis(vec3(0, 0,1))
+        this.obj.trans.setRotate(rot);
+
+    }
+
+    update(camPos, t, deltaTime) {
+
+        if(!this.checkDespawn(camPos))
+        {
+          this.jumpLogic(deltaTime)
+
+           // console.log(this.pos)
+            this.obj.trans.move(scale(deltaTime, this.velocity))
+            //console.log(this.pos)
+            this.pos = add(this.pos, scale(deltaTime, this.velocity))
+
+            this.alignHeadWithVelocity()
+        }
+
+
+    }
 }
 
 
@@ -573,7 +736,7 @@ function genRandPointInsideFrustrum(proj, camPos)
 
 function spawnFlock(proj, camPos)
 {
-    if(birds.length > 20)
+    if(birds.length > 12)
         return;
     //generateRandom num between 1 and 7
 
@@ -595,6 +758,22 @@ function spawnFlock(proj, camPos)
     }
 }
 
+function spawnFish(proj, camPos)
+{
+    if(fishies.length > 3)
+        return;
+    //fixed y value, rand z value, fixed z for now
+    let x = genUniformRand(0, 1)
+    let pos = vec3(-3, -0.5, 0.6)
+    let dir = 1;
+    if(x > 0.5)
+    {
+        pos = vec3(3, -0.5, 0.6)
+        dir = -1
+    }
+
+    fishies.push(new Fish(1.5, dir, pos))
+}
 
 
 
@@ -602,4 +781,5 @@ function spawnFlock(proj, camPos)
 
 
 
-export {createCharacterFeature, Bird, BoundingSphere, birds, obstacles, spawnFlock, Wing}
+
+export {createCharacterFeature, Bird, fishies, BoundingSphere, birds, obstacles, spawnFlock, Wing, spawnFish, Fish}

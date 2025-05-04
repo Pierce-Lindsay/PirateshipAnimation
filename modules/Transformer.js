@@ -15,7 +15,7 @@ class Transform
         this.rotation = structuredClone(rotation);
         this.scale = structuredClone(scale);
 
-        this.rotMat = mat4(1.0);
+        this.rotMat = rotate(this.rotation, this.rotAxis);
     }
 
     //adds to current rotation by rot

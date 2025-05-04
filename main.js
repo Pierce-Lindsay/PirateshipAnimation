@@ -5,7 +5,7 @@ import {Camera, Projection, Transform} from './modules/Transformer.js';
 import {createCube, Spline, convertFromEulertoQuanterion, slerp} from './modules/Shape.js';
 import {Obj, objects, deleteObject} from "./modules/Object.js"
 import {Bone, Skeleton} from './modules/Skeleton.js';
-import {createCharacterFeature, Bird, birds, BoundingSphere, obstacles, spawnFlock, Wing} from "./modules/Animals.js";
+import {createCharacterFeature, Bird, fishies, birds, BoundingSphere, obstacles, spawnFlock, Wing, spawnFish} from "./modules/Animals.js";
 
 //globals
 
@@ -25,7 +25,6 @@ const CUBE_VERTS = createCube()[0];
 const RED = vec4(0.9, 0.1, 0.1, 1.0);
 const ORIGIN = vec3(0, 0, 0)
 const NORMAL_SCALE = vec3(1, 1,1);
-
 
 
 const FOV = 90;
@@ -66,9 +65,13 @@ function initializeGlobals()
 
 
 
+
+
     //just to prove everything is working(not important at all)
     let o1 = createCharacterFeature(null, RED, structuredClone(CUBE_VERTS), vec3(0, 1, 0), scale(1, NORMAL_SCALE), 0, vec3(0, 0, 1));
     let bound = new BoundingSphere(o1);
+
+
 
 
 
@@ -111,17 +114,28 @@ function animate()
     if(twoSecTimer > 6)
     {
         spawnFlock(projection, cam.eye)
+        spawnFish(projection, cam.eye);
         twoSecTimer = 0;
     }
 
+   // w1.animate(elapsedTime)
 
-    let sz = 0;
+
     for(let i = 0; i < birds.length; i++)
     {
         birds[i].update(cam.eye, elapsedTime, deltaTime);
-        sz++;
+
     }
-    console.log("size " + sz)
+
+    for(let i =0; i < fishies.length; i++)
+    {
+        fishies[i].update(cam.eye, elapsedTime, deltaTime);
+    }
+    console.log("size " + birds.length)
+
+    //alpha += deltaTime * 2;
+
+
 
     requestAnimationFrame(animate);
     //draw

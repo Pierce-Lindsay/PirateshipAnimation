@@ -77,14 +77,20 @@ function deleteObject(id)
 {
     let newObjects = [];
 
+
     for(let i =0; i < objects.length; i++)
     {
         if(objects[i].id !== id)
             newObjects.push(objects[i]);
         else
         {
-          //  for(let j =0; j < objects[i].children.length; j++)
-           //     deleteObject(objects[i].children[j].id)
+            //console.log(objects[i])
+           // for(let j =0; j < objects[i].children.length; j++)
+           // {
+               // console.log(objects[i])
+              //  deleteObject(objects[i].children[j].id)
+           // }
+
         }
     }
     objects = newObjects;
