@@ -30,6 +30,8 @@
           uniform float time;
 
           attribute vec4 vPosition;
+          varying float camPos;
+
 
           void main()
           {
@@ -37,7 +39,10 @@
 
             pos.x = pos.x + (4.0 + time) * sin((pos.y * 3.1415) / 8.0);
 
-            gl_Position = projectionMatrix * cameraMatrix * modelMatrix * pos;
+            vec4 camP = cameraMatrix * modelMatrix * pos;
+            gl_Position = projectionMatrix * camP;
+
+             camPos = camP.y;
           }
       </script>
 

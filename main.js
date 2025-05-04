@@ -2,7 +2,7 @@
 
 import {Renderable, initRenderer, setCam, setProj} from './modules/Renderable.js';
 import {Camera, Projection, Transform} from './modules/Transformer.js';
-import {createPrism, createBall, createCylinder, createCube, Spline, convertFromEulertoQuanterion, slerp,NORMAL_SQUAR} from './modules/Shape.js';
+import {createPrism, createBall, createCylinder, createCube, Spline, convertFromEulertoQuanterion, slerp, NORMAL_SQUARE, square} from './modules/Shape.js';
 import {Obj, objects, deleteObject} from "./modules/Object.js"
 import {Bone, Skeleton} from './modules/Skeleton.js';
 import {cleanUpObjects,  createCharacterFeature, Bird, fishies, birds, BoundingSphere, obstacles, spawnFlock, Wing, spawnFish} from "./modules/Animals.js";
@@ -42,14 +42,13 @@ const ASPECT = 1.0;
 //returns bool, just takes in the pos
 
 let sun = null;
-let testShip = null;
 
 let sea = null;
 
 function moveCamAndNonAffectedObjects(deltaTime)
 {
     let mov = vec3(CAM_SPEED * deltaTime, 0, 0);
-    testShip.trans.move(mov)
+    ship.trans.move(mov)
     sea.trans.move(mov)
     sun.trans.move(mov)
     cam.move(mov)
@@ -82,7 +81,6 @@ function genCloud(camPos, proj, beforeStart = false)
 }
 
 
-=======
 let ship = null;
 let cannon = null;
 
@@ -154,7 +152,7 @@ function initializeGlobals()
 function createPirateShip() {
 
     let shipR = new Renderable(CUBE_VERTS, vec4(0.0, 0.0, 0.0, 1.0));
-    let shipT = new Transform(vec3(0.0,-1.0,-2.0), vec3(0.5,0.5,0.5), 0.0);
+    let shipT = new Transform(vec3(0.0,0.8,-1.0), vec3(0.5,0.5,0.5), 0.0);
 
     ship = new Obj(shipR, shipT);
 
@@ -192,15 +190,14 @@ function createPirateShip() {
     sun = createCharacterFeature(null, vec4(1, 0.8, 0.1 ,1), structuredClone(CUBE_VERTS), vec3(0, 5, -8), scale(2, NORMAL_SCALE), 45, vec3(0, 0, 1));
     objects.push(sun)
     //just to prove everything is working(not important at all)
-    testShip = createCharacterFeature(null, RED, structuredClone(CUBE_VERTS), vec3(0, 1, 0), scale(1, NORMAL_SCALE), 0, vec3(0, 0, 1));
-    let bound = new BoundingSphere(testShip);
+
+    let bound = new BoundingSphere(ship, vec3(0, 0.5, 0), 2);
 
 
 
     sea = createCharacterFeature(null, vec4(0, 0.2, 0.8, 1), structuredClone(CUBE_VERTS), vec3(0, 0.95, 0), vec3(50, 0.05, 50), 0, vec3(0, 0, 1));
         objects.push(sea)
 
-    objects.push(testShip);
 
         genCloud(add(cam.eye,vec3 ( 1, 0, 0)), projection, true)
     genCloud(add(cam.eye,vec3(8, 0, 0)), projection, true)
@@ -225,6 +222,7 @@ function createPirateShip() {
     ship.addChild(cannonball);
 
     objects.push(ship);
+    console.log(ship)
 }
 
 
@@ -285,9 +283,9 @@ function animate()
     for(let i =0; i < fishies.length; i++)
     {
         fishies[i].update(cam.eye, elapsedTime, deltaTime);
+        //console.log(fishies[i].obj.trans.pos)
     }
 
-    //alpha += deltaTime * 2;
 
     moveCamAndNonAffectedObjects(deltaTime)
 
@@ -319,7 +317,7 @@ function animate()
     //draw
     drawStuff();
 
-   cleanUpObjects(cam.eye);
+  // cleanUpObjects(cam.eye);
 }
 
 

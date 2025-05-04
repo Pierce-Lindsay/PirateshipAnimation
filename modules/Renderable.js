@@ -102,10 +102,10 @@ class Renderable {
 
         //setup uniforms for matrices
 
-        pushUniformMat(curProj.getMatrix(), "projectionMatrix");
-        pushUniformMat(modelMat, "modelMatrix");
-        pushUniformMat(curCam.getMatrix(), "cameraMatrix");
-        pushUniformVec4(this.color, "color");
+        pushUniformMat(curProj.getMatrix(), "projectionMatrix", this.shaderProgram);
+        pushUniformMat(modelMat, "modelMatrix", this.shaderProgram);
+        pushUniformMat(curCam.getMatrix(), "cameraMatrix", this.shaderProgram);
+        pushUniformVec4(this.color, "color", this.shaderProgram);
 
         //Allows shaders to animate with time
         if (this.shaderProgram !== program) {

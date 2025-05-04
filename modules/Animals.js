@@ -572,7 +572,7 @@ class Fish
         if(!this.jumping)
         {
             let x = genUniformRand(1, 2);
-            if(x > 1.9)
+            if(x > 1.5)
             {
                 // dd positive velicty component
                 this.velocity[1] = FISH_JUMP_STRENGTH
