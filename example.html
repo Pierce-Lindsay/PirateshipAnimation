@@ -9,6 +9,7 @@
           uniform mat4 modelMatrix;
           uniform mat4 cameraMatrix;
           uniform mat4 projectionMatrix;
+          uniform float time;
 
           attribute vec4 vPosition;
           varying float camPos;
@@ -18,6 +19,25 @@
           vec4 camP = cameraMatrix * modelMatrix * vPosition;
              gl_Position = projectionMatrix * camP;
              camPos = camP.y;
+          }
+      </script>
+
+      <script id="sailshader" type="x-shader/x-vertex">
+          precision mediump float;
+          uniform mat4 modelMatrix;
+          uniform mat4 cameraMatrix;
+          uniform mat4 projectionMatrix;
+          uniform float time;
+
+          attribute vec4 vPosition;
+
+          void main()
+          {
+            vec4 pos = vPosition;
+
+            pos.x = pos.x + (4.0 + time) * sin((pos.y * 3.1415) / 8.0);
+
+            gl_Position = projectionMatrix * cameraMatrix * modelMatrix * pos;
           }
       </script>
 
@@ -47,12 +67,17 @@
       import { main } from './main.js'; // load main
       document.addEventListener('DOMContentLoaded', main);
   </script>
+
+
     <canvas id="webgl" width="550" height="550">
     Please use a browser that supports the "canvas" tag.
     </canvas>
 
 
-
+    <div id="ui-panel">
+      <label>Cannon Angle: <input type="range" id="angleSlider" min="-90" max="90" step="1" value="0"></label><br>
+      <label>Cannon Pitch: <input type="range" id="pitchSlider" min="10" max="80" step="1" value="45"></label>
+  </div>
 
   </body>
 </html>

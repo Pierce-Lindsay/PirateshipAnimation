@@ -2,7 +2,7 @@
 
 import {Renderable, initRenderer, setCam, setProj} from './modules/Renderable.js';
 import {Camera, Projection, Transform} from './modules/Transformer.js';
-import {createCube, Spline, convertFromEulertoQuanterion, slerp, square, NORMAL_SQUARE} from './modules/Shape.js';
+import {createPrism, createBall, createCylinder, createCube, Spline, convertFromEulertoQuanterion, slerp,NORMAL_SQUAR} from './modules/Shape.js';
 import {Obj, objects, deleteObject} from "./modules/Object.js"
 import {Bone, Skeleton} from './modules/Skeleton.js';
 import {cleanUpObjects,  createCharacterFeature, Bird, fishies, birds, BoundingSphere, obstacles, spawnFlock, Wing, spawnFish} from "./modules/Animals.js";
@@ -15,18 +15,25 @@ let gl;
 //delta time globals
 let lastTime = 0;
 
+
 let twoSecTimer = 0;
 let elapsedTime = 0;
 let cloudTimer = 0;
 let cam = null;
 let projection = null;
 
+
 const CUBE_VERTS = createCube()[0];
+const CYCLINDER_VERTS = createCylinder()[0];
+const INVERSE_CYLINDER = createCylinder()[1];
+const SPHERE_VERTS = createBall();
+const PRISM_VERTS = createPrism();
 
 const RED = vec4(0.9, 0.1, 0.1, 1.0);
 const ORIGIN = vec3(0, 0, 0)
 const NORMAL_SCALE = vec3(1, 1,1);
 const CAM_SPEED = 0.23;
+
 
 const FOV = 90;
 const NEAR = 0.1;
@@ -75,6 +82,20 @@ function genCloud(camPos, proj, beforeStart = false)
 }
 
 
+=======
+let ship = null;
+let cannon = null;
+
+let sail = null;
+let sailShader;
+
+let cannonball = null;
+let ballVel = vec3();
+let ballLaunched = false;
+
+let angle = 0.0;
+let pitch = 45.0;
+
 //initializes mains global vars and calls neccessary init functions
 function initializeGlobals()
 {
@@ -93,6 +114,28 @@ function initializeGlobals()
 
     //init renderer
     initRenderer(gl, cam, projection)
+    document.getElementById("angleSlider").addEventListener("input", e => angle = parseFloat(e.target.value));
+    document.getElementById("pitchSlider").addEventListener("input", e => pitch = parseFloat(e.target.value));
+
+    canvas.addEventListener("click", () => {
+        if (!ballLaunched) {
+            let rad = (90 - pitch) * Math.PI / 180;
+            let rot = angle * Math.PI / 180;
+	    /* FIX ME */
+            /* Define initial ballPos and ballVel */
+
+            ballVel = vec3(mult(mult(rotateZ(-pitch), rotateX(angle)), vec4(0.0, 1.0, 0.0, 1.0)))
+
+            cannonball.trans.setPos(add(ballVel, cannon.trans.pos));
+
+            ballLaunched = true;
+        }
+    });
+
+    //init renderer
+
+    sailShader = initShaders(gl, "sailshader", "fshader");
+
     //default normal, basically does nothing
     //init default viewports and gl stuff
     gl.viewport( 0, 0, canvas.width, canvas.height);
@@ -104,10 +147,47 @@ function initializeGlobals()
     gl.enable(gl.BLEND);
 
     //make the shapes and renderables we need
+    createPirateShip();
+}
 
 
+function createPirateShip() {
 
+    let shipR = new Renderable(CUBE_VERTS, vec4(0.0, 0.0, 0.0, 1.0));
+    let shipT = new Transform(vec3(0.0,-1.0,-2.0), vec3(0.5,0.5,0.5), 0.0);
 
+    ship = new Obj(shipR, shipT);
+
+    let bodyR = new Renderable(CUBE_VERTS, vec4(112/256, 60/256, 37/256, 1.0));
+    let bodyT = new Transform(ORIGIN, vec3(3.0, 1.5, 1.5), 0.0);
+
+    ship.addChild(new Obj(bodyR, bodyT, ship));
+
+    let mastR = new Renderable(CUBE_VERTS, vec4(112/256, 60/256, 37/256, 1.0));
+    let mastT = new Transform(vec3(0.0, 2.5, 0.0), vec3(0.5, 4.0, 0.5), 0.0);
+
+    let mastCrossR1 = new Renderable(CUBE_VERTS, vec4(112/256, 60/256, 37/256, 1.0));
+    let mastCrossR2 = new Renderable(CUBE_VERTS, vec4(112/256, 60/256, 37/256, 1.0));
+
+    let mastCrossT1 = new Transform(vec3(0.25, 1.8, 0.0), vec3(0.25, 0.25, 2.5), 0.0);
+    let mastCrossT2 = new Transform(vec3(0.25, 4.2, 0.0), vec3(0.25, 0.25, 2.5), 0.0);
+
+    ship.addChild(new Obj(mastR, mastT, ship));
+    ship.addChild(new Obj(mastCrossR1, mastCrossT1, ship));
+    ship.addChild(new Obj(mastCrossR2, mastCrossT2, ship));
+
+    let sailR1 = new Renderable(PRISM_VERTS, vec4(1.0, 1.0, 1.0, 1.0), sailShader);
+    let sailT1 = new Transform(vec3(0.35, 1.8, 0.0), vec3(0.1, 0.3, 2.25), 0.0);
+
+    let sail = new Obj(sailR1, sailT1, ship);
+
+    ship.addChild(sail);
+
+    let bowspritR = new Renderable(CUBE_VERTS, vec4(112/256, 60/256, 37/256, 1.0));
+    let bowspritT = new Transform(vec3(2.0, 0.5, 0.0), vec3(1.5, 0.5, 0.5), 0.0);
+    bowspritT.rotate(10);
+
+    ship.addChild(new Obj(bowspritR, bowspritT, ship));
 
     sun = createCharacterFeature(null, vec4(1, 0.8, 0.1 ,1), structuredClone(CUBE_VERTS), vec3(0, 5, -8), scale(2, NORMAL_SCALE), 45, vec3(0, 0, 1));
     objects.push(sun)
@@ -125,6 +205,26 @@ function initializeGlobals()
         genCloud(add(cam.eye,vec3 ( 1, 0, 0)), projection, true)
     genCloud(add(cam.eye,vec3(8, 0, 0)), projection, true)
 
+    let cannonR = new Renderable(CYCLINDER_VERTS, vec4(0.4, 0.4, 0.4, 1.0));
+    let cannonT = new Transform(vec3(1.0, 0.8, 0.0), vec3(0.3, 1.5, 0.3), 0.0);
+
+    cannon = new Obj(cannonR, cannonT, ship);
+
+    let inverseR = new Renderable(INVERSE_CYLINDER, vec4(0.2, 0.2, 0.2, 1.0));
+    let inverseT = new Transform(ORIGIN, vec3(1.0, 1.0, 1.0), 0.0);
+
+    cannon.addChild(new Obj(inverseR, inverseT, cannon));
+
+    ship.addChild(cannon);
+
+    let ballR = new Renderable(SPHERE_VERTS, vec4(0.4, 0.4, 0.4, 1.0));
+    let ballT = new Transform(ORIGIN, vec3(5, 5, 5), 0.0);
+
+    cannonball = new Obj(ballR, ballT, ship);
+
+    ship.addChild(cannonball);
+
+    objects.push(ship);
 }
 
 
@@ -142,6 +242,8 @@ function drawStuff()
         }
 }
 
+let theta = 0.0;
+
 //recursive draw function
 function animate()
 {
@@ -153,6 +255,7 @@ function animate()
     if(deltaTime <= 0)
         deltaTime = 0.0;
     lastTime = time;
+
 
     twoSecTimer += deltaTime;
     elapsedTime += deltaTime;
@@ -187,6 +290,30 @@ function animate()
     //alpha += deltaTime * 2;
 
     moveCamAndNonAffectedObjects(deltaTime)
+
+
+    //Animate boat rocking
+    theta += 0.01;
+
+    let r1 = rotateX(Math.sin(theta) * 5);
+    let r2 = rotateZ(Math.sin(theta) * 5);
+
+    ship.trans.setRotMat(mult(mult(r1, r2), rotateY(0)));
+    ship.trans.move(vec3(0.0, Math.cos(theta-2.0)/500, 0.0));
+
+    //Set cannon position
+    cannon.trans.setRotMat(mult(rotateZ(-pitch), rotateX(angle)));
+
+    //Animate cannonball
+    if (ballLaunched) {
+        cannonball.trans.move(scale(deltaTime * 10, ballVel));
+        ballVel[1] -= 1.5 * deltaTime;
+
+        if (cannonball.trans.pos[1] < -5) {
+            ballLaunched = false;
+            cannonball.trans.setPos(ORIGIN);
+        }
+    }
 
     requestAnimationFrame(animate);
     //draw

@@ -36,11 +36,17 @@ function setProj(projection)
 //class for drawing an object with a  set of vertices and vertex colors
 class Renderable {
     //set default values
-    constructor(vertices, color) {
+    constructor(vertices, color, shaderProgram = program) {
         //an array of vertex sets
+        this.shaderProgram = shaderProgram;
         this.change(vertices);
         this.drawMode = gl.TRIANGLES;
         this.color = color;
+
+        //Allows shaders to animate with time
+        if (this.shaderProgram !== program) {
+            this.startTime = performance.now();
+        }
     }
 
     //change vertices of our object with a shape
@@ -64,11 +70,13 @@ class Renderable {
     //vPosition stores our attrib pointer to be enabled
     setupPoints()
     {
+        gl.useProgram(this.shaderProgram);
+
         this.pBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.pBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, flatten(this.vertices), gl.STATIC_DRAW);
 
-        this.vPosition = gl.getAttribLocation(program,  "vPosition");
+        this.vPosition = gl.getAttribLocation(this.shaderProgram,  "vPosition");
         gl.vertexAttribPointer(this.vPosition, 4, gl.FLOAT, false, 0, 0);
     }
 
@@ -90,11 +98,21 @@ class Renderable {
     draw(modelMat)
     {
 
+        gl.useProgram(this.shaderProgram);
+
         //setup uniforms for matrices
+
         pushUniformMat(curProj.getMatrix(), "projectionMatrix");
         pushUniformMat(modelMat, "modelMatrix");
         pushUniformMat(curCam.getMatrix(), "cameraMatrix");
         pushUniformVec4(this.color, "color");
+
+        //Allows shaders to animate with time
+        if (this.shaderProgram !== program) {
+            let time = Math.sin((performance.now() - this.startTime) / 300);
+            let timeLoc = gl.getUniformLocation(this.shaderProgram, "time");
+            gl.uniform1f(timeLoc, time);
+        }
 
         //enable attrib arrays
         this.enablePoints()
@@ -111,14 +129,14 @@ class Renderable {
 }
 
 //gets unifrom location given assumed correct name and passes in teh data to the shader
-function pushUniformMat(data, uniformName) {
-    let uniLoc = gl.getUniformLocation(program, uniformName);
+function pushUniformMat(data, uniformName, shaderProgram) {
+    let uniLoc = gl.getUniformLocation(shaderProgram, uniformName);
     gl.uniformMatrix4fv(uniLoc, false, flatten(data));
 }
 
 //get uniform for vec4s
-function pushUniformVec4(data, uniformName) {
-    let uniLoc = gl.getUniformLocation(program, uniformName);
+function pushUniformVec4(data, uniformName, shaderProgram) {
+    let uniLoc = gl.getUniformLocation(shaderProgram, uniformName);
     gl.uniform4fv(uniLoc, data);
 }
 
