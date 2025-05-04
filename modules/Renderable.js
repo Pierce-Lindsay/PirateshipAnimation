@@ -1,20 +1,34 @@
 
 
-import {projMatrix, cameraMatrix} from './Transformer.js';
+import {Camera, Projection} from './Transformer.js';
 
 //globals
 let program;
 let gl;
 
+let curCam = null;
+let curProj = null;
+
 
 //initializes our renderer with shaders and gl context
-function initRenderer(glContext)
+function initRenderer(glContext, camera, projection)
 {
     gl = glContext
     program = initShaders(gl, "vshader", "fshader");
     glContext.useProgram(program);
 
+    curCam = camera;
+    curProj = projection;
+}
 
+function setCam(camera)
+{
+    curCam = camera;
+}
+
+function setProj(projection)
+{
+    curProj = projection;
 }
 
 
@@ -77,9 +91,9 @@ class Renderable {
     {
 
         //setup uniforms for matrices
-        pushUniformMat(projMatrix, "projectionMatrix");
+        pushUniformMat(curProj.getMatrix(), "projectionMatrix");
         pushUniformMat(modelMat, "modelMatrix");
-        pushUniformMat(cameraMatrix, "cameraMatrix");
+        pushUniformMat(curCam.getMatrix(), "cameraMatrix");
         pushUniformVec4(this.color, "color");
 
         //enable attrib arrays
@@ -109,4 +123,4 @@ function pushUniformVec4(data, uniformName) {
 }
 
 
-export {Renderable,initRenderer};
+export {Renderable,initRenderer, setCam, setProj};

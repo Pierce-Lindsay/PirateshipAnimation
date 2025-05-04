@@ -1,5 +1,5 @@
 import {Obj} from "./Object.js"
-import {setProjection, setCamera, projMatrix, cameraMatrix, Transform} from './Transformer.js';
+import {Transform} from './Transformer.js';
 
 
 //skeleton class for handling many bones all linked together
