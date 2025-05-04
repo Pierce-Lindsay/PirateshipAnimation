@@ -152,7 +152,7 @@ function initializeGlobals()
 function createPirateShip() {
 
     let shipR = new Renderable(CUBE_VERTS, vec4(0.0, 0.0, 0.0, 1.0));
-    let shipT = new Transform(vec3(0.0,0.8,-1.0), vec3(0.5,0.5,0.5), 0.0);
+    let shipT = new Transform(vec3(0.0,0.9,-1.0), vec3(0.5,0.5,0.5), 0.0);
 
     ship = new Obj(shipR, shipT);
 
@@ -297,7 +297,7 @@ function animate()
     let r2 = rotateZ(Math.sin(theta) * 5);
 
     ship.trans.setRotMat(mult(mult(r1, r2), rotateY(0)));
-    ship.trans.move(vec3(0.0, Math.cos(theta-2.0)/500, 0.0));
+    ship.trans.move(vec3(0.0, Math.cos(theta-2.0)/700, 0.0));
 
     //Set cannon position
     cannon.trans.setRotMat(mult(rotateZ(-pitch), rotateX(angle)));
