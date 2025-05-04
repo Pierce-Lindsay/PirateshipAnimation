@@ -109,6 +109,7 @@ class Camera
     move(delta)
     {
         this.eye = add(this.eye, delta)
+        this.at= add(this.at, delta)
     }
 }
 

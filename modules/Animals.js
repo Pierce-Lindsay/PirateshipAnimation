@@ -60,6 +60,15 @@ const WING_DEF = vec3(0, 0, 1);
 
 
 
+function posOutOfBounds(camPos, pos)
+{
+    return pos[0] < camPos[0] + X_MIN ||
+        pos[0] > camPos[0] + X_MAX ||
+        pos[1] > camPos[1] + Y_MAX ||
+        pos[2] < camPos[2] + Z_MIN ||
+        pos[2] > camPos[2] + Z_MAX;
+}
+
 
 //class for handling our wings, we have two of them so it makes sense to have a class
 class Wing
@@ -211,6 +220,7 @@ function deleteParticle(id, array) {
     array= newArray;
     return array;
 }
+
 
 
 //parent class for particles and handling them
@@ -441,19 +451,9 @@ class Bird {
 
 
 
-    checkIfBirdShouldDespawn(camPos)
-    {
-        return this.pos[0] < camPos[0] + X_MIN ||
-            this.pos[0] > camPos[0] + X_MAX ||
-            this.pos[1] < WATER_LEVEL||
-            this.pos[1] > camPos[1] + Y_MAX ||
-            this.pos[2] < camPos[2] + Z_MIN ||
-            this.pos[2] > camPos[2] + Z_MAX;
-    }
-
     updateParticalDespawn(camPos)
     {
-        if(this.checkIfBirdShouldDespawn(camPos))
+        if(posOutOfBounds(camPos, this.pos))
         {
             birds = deleteParticle(this.obj.id, birds)
             return true;
@@ -574,7 +574,6 @@ class Fish
             let x = genUniformRand(1, 2);
             if(x > 1.9)
             {
-                console.log("here" + x)
                 // dd positive velicty component
                 this.velocity[1] = FISH_JUMP_STRENGTH
                 this.jumping = true;
@@ -660,12 +659,7 @@ class Fish
 
 
 
-function genUniformRand(min, max)
-{
-    let size = max - min;
-    let offset = min;
-    return  (Math.random() * size) + min
-}
+
 
 function genRandPointOutsideFrustrum(proj, camPos)
 {
@@ -743,7 +737,7 @@ function spawnFlock(proj, camPos)
     let size = Math.ceil(genUniformRand(1, 7))
 
    let pos = genRandPointOutsideFrustrum (proj, camPos)
-    let finish = vec3( genUniformRand(-2, 2), 2 + genUniformRand(-2, 2), genUniformRand(-2, 2))
+    let finish = vec3( genUniformRand(-2, 2) + 2.5 + camPos[0], 2 + genUniformRand(-2, 2), genUniformRand(-2, 2))
     //let finish = genRandPointInsideFrustrum(proj, camPos)
 
     let dir = normalize(subtract(finish, pos))
@@ -777,9 +771,16 @@ function spawnFish(proj, camPos)
 
 
 
+function cleanUpObjects(camPos)
+{
+    for(let i =0; i < objects.length; i++)
+    {
+        if(posOutOfBounds(camPos, objects[i].trans.pos))
+            deleteObject(objects[i].id)
+    }
+}
 
 
 
 
-
-export {createCharacterFeature, Bird, fishies, BoundingSphere, birds, obstacles, spawnFlock, Wing, spawnFish, Fish}
+export {createCharacterFeature, Bird, fishies, BoundingSphere, birds, obstacles, spawnFlock, Wing, spawnFish, Fish, cleanUpObjects}

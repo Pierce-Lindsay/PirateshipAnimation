@@ -11,22 +11,27 @@
           uniform mat4 projectionMatrix;
 
           attribute vec4 vPosition;
+          varying float camPos;
 
           void main()
           {
-             gl_Position = projectionMatrix * cameraMatrix * modelMatrix * vPosition;
-
+          vec4 camP = cameraMatrix * modelMatrix * vPosition;
+             gl_Position = projectionMatrix * camP;
+             camPos = camP.y;
           }
       </script>
 
       <script id="fshader" type="x-shader/x-fragment">
           precision mediump float;
           uniform vec4 color;
+          varying float camPos;
 
 
           void main()
           {
-             gl_FragColor = color;
+          float fogFactor = clamp(-(camPos/1.3), 0.0, 1.0);
+          vec4 fogColor = vec4(0.8, 0.8, 0.8, 1.0);
+             gl_FragColor = mix(color, fogColor, fogFactor);
           }
       </script>
 

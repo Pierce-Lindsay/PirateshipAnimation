@@ -97,4 +97,5 @@ function deleteObject(id)
 
 }
 
+
 export{Obj, objects, deleteObject};

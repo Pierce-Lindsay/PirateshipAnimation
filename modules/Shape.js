@@ -12,6 +12,8 @@ const uniformBMat = [[-1.0/6.0, 0.5, -0.5, 1.0/6.0],
     [-0.5, 0.0, 0.5, 0.0],
     [1.0/6.0, 2.0/3.0, 1.0/6.0, 0.0]];
 
+let NORMAL_SQUARE = [[-0.5, 0.5, 0.0, 1.0], [0.5, 0.5, 0.0, 1.0], [0.5, -0.5, 0.0, 1.0], [-0.5, -0.5, 0.0, 1.0]]
+
 
 //returns new shape, created by making a square from inputed vertices composed of two triangles
 function square(vertices)
@@ -253,5 +255,5 @@ class Spline
 }
 
 
-export{ square, createCube, Spline, convertFromEulertoQuanterion , slerp}
+export{ square, createCube, Spline, convertFromEulertoQuanterion , slerp, NORMAL_SQUARE}
 
