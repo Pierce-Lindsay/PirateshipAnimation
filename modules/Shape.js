@@ -76,6 +76,57 @@ function createCube()
     return [vertices, colors];
 }
 
+function createCylinder() {
+
+    let points = 32;
+
+    let topCircle = [];
+    let bottomCircle = [];
+
+    for (let i = 0; i <= points; i++) {
+
+        let angle = i * 2 * Math.PI / points;
+
+        let x = Math.cos(angle);
+        let z = Math.sin(angle);
+
+        topCircle.push(vec4(x, 1.0, z, 1.0));
+        bottomCircle.push(vec4(x, 0.0, z, 1.0));
+    }
+
+    let vertices = [];
+
+    for (let i = 0; i < points; i++) {
+        vertices = vertices.concat(square([topCircle[i+1], topCircle[i], bottomCircle[i], bottomCircle[i+1]]));
+    }
+
+    let inverse = [];
+
+    for (let i = 0; i < points; i++) {
+        inverse = inverse.concat(square([topCircle[i], topCircle[i+1], bottomCircle[i+1], bottomCircle[i]]));
+    }
+
+    return [vertices, inverse];
+}
+
+function createBall() {
+    const r = 0.05;
+    const slices = 20;
+    let vertices = [];
+    let normals = [];
+    for (let i = 0; i < slices; i++) {
+        let theta1 = (i / slices) * 2 * Math.PI;
+        let theta2 = ((i + 1) / slices) * 2 * Math.PI;
+
+        vertices.push(vec4(0, 0, 0, 1),
+            vec4(r * Math.cos(theta1), r * Math.sin(theta1), 0, 1),
+            vec4(r * Math.cos(theta2), r * Math.sin(theta2), 0, 1));
+        normals.push(vec3(0, 0, 1), vec3(0, 0, 1), vec3(0, 0, 1));
+    }
+
+    return vertices;
+}
+
 //multiply matrix with vertical vector
 function verticalMat4Vec4Dot(v, mat)
 {
@@ -253,5 +304,5 @@ class Spline
 }
 
 
-export{ square, createCube, Spline, convertFromEulertoQuanterion , slerp}
+export{ square, createCube, createCylinder, createBall, Spline, convertFromEulertoQuanterion , slerp}
 
