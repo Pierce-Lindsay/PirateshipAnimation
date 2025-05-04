@@ -1,9 +1,4 @@
 
-//all objects use same camera so just make it global
-let cameraMatrix;
-let projMatrix;
-
-
 
 //creates model matrix given rotation dialation, rotation, translation
 class Transform
@@ -20,7 +15,7 @@ class Transform
         this.rotation = structuredClone(rotation);
         this.scale = structuredClone(scale);
 
-        this.rotMat = mat4(1.0);
+        this.rotMat = rotate(this.rotation, this.rotAxis);
     }
 
     //adds to current rotation by rot
@@ -97,15 +92,58 @@ class Transform
 
 
 
-//setters allowing other modules to change these vars
-function setProjection(proj)
+class Camera
 {
-    projMatrix = proj;
+    constructor(eye, at, up)
+    {
+        this.eye = eye;
+        this.at = at;
+        this.up = up;
+    }
+
+    getMatrix()
+    {
+        return lookAt(this.eye, this.at, this.up)
+    }
+
+    move(delta)
+    {
+        this.eye = add(this.eye, delta)
+        this.at= add(this.at, delta)
+    }
 }
 
-function setCamera(cam)
+
+class Projection
 {
-    cameraMatrix = cam;
+    constructor(fov, aspect, near, far)
+    {
+        this.fov= fov;
+        this.aspect = aspect;
+        this.near = near;
+        this.far = far
+    }
+
+    getMatrix()
+    {
+        return perspective(this.fov, this.aspect, this.near, this.far)
+    }
+
+    //assumes positive z value
+    getFrustrumSize(distance)
+    {
+        if(distance < this.near || distance > this.far)
+            return vec3(0, 0, 0)
+        else
+        {
+            let y = 2 * distance * Math.tan(radians(this.fov * 0.5));
+            let x = this.aspect * y;
+            let z = this.far - this.near;
+            return vec3(x, y, z)
+        }
+    }
+
 }
 
-export{Transform, projMatrix, cameraMatrix, setProjection, setCamera}
+
+export{Transform, Camera, Projection}

@@ -8,15 +8,19 @@ let objects = []
 //class for hierarchical relationships
 class Obj
 {
+    //we can make non rendering objects by making renderable null
     constructor(renderable, transformer, parent = null)
     {
         this.renderable = renderable;
         this.trans = transformer;
         this.parent = parent;
-        this.shouldDraw = true;
+        if(renderable != null)
+            this.shouldDraw = true;
         this.children = [];
         this.id = id;
         id++;
+
+
     }
 
 
@@ -73,18 +77,25 @@ function deleteObject(id)
 {
     let newObjects = [];
 
+
     for(let i =0; i < objects.length; i++)
     {
         if(objects[i].id !== id)
             newObjects.push(objects[i]);
         else
         {
-            for(let j =0; j < objects[i].children.length; j++)
-                deleteObject(objects[i].children[j].id)
+            //console.log(objects[i])
+           // for(let j =0; j < objects[i].children.length; j++)
+           // {
+               // console.log(objects[i])
+              //  deleteObject(objects[i].children[j].id)
+           // }
+
         }
     }
     objects = newObjects;
 
 }
+
 
 export{Obj, objects, deleteObject};
