@@ -2,7 +2,7 @@
 
 import {Renderable, initRenderer} from './modules/Renderable.js';
 import {setProjection, setCamera, projMatrix, cameraMatrix, Transform} from './modules/Transformer.js';
-import {createBall, createCylinder, createCube, Spline, convertFromEulertoQuanterion, slerp} from './modules/Shape.js';
+import {createPrism, createBall, createCylinder, createCube, Spline, convertFromEulertoQuanterion, slerp} from './modules/Shape.js';
 import {Obj, objects, deleteObject} from "./modules/Object.js"
 import {Bone, Skeleton} from './modules/Skeleton.js';
 import {createCharacterFeature} from "./modules/Animals.js";
@@ -19,6 +19,7 @@ const CUBE_VERTS = createCube()[0];
 const CYCLINDER_VERTS = createCylinder()[0];
 const INVERSE_CYLINDER = createCylinder()[1];
 const SPHERE_VERTS = createBall();
+const PRISM_VERTS = createPrism();
 
 const RED = vec4(0.9, 0.1, 0.1, 1.0);
 const ORIGIN = vec3(0, 0, 0)
@@ -26,6 +27,9 @@ const NORMAL_SCALE = vec3(1, 1,1);
 
 let ship = null;
 let cannon = null;
+
+let sail = null;
+let sailShader;
 
 let cannonball = null;
 let ballVel = vec3();
@@ -69,6 +73,9 @@ function initializeGlobals()
 
     //init renderer
     initRenderer(gl)
+
+    sailShader = initShaders(gl, "sailshader", "fshader");
+
     //default normal, basically does nothing
     setProjection(perspective(90, 1.0, 0.25, 20.0))
     //default look at middle of screen
@@ -81,7 +88,6 @@ function initializeGlobals()
 
     //make the shapes and renderables we need
     createPirateShip();
-    createSail();
 }
 
 
@@ -110,6 +116,13 @@ function createPirateShip() {
     ship.addChild(new Obj(mastCrossR1, mastCrossT1, ship));
     ship.addChild(new Obj(mastCrossR2, mastCrossT2, ship));
 
+    let sailR1 = new Renderable(PRISM_VERTS, vec4(1.0, 1.0, 1.0, 1.0), sailShader);
+    let sailT1 = new Transform(vec3(0.35, 1.8, 0.0), vec3(0.1, 0.3, 2.25), 0.0);
+
+    let sail = new Obj(sailR1, sailT1, ship);
+
+    ship.addChild(sail);
+
     let bowspritR = new Renderable(CUBE_VERTS, vec4(112/256, 60/256, 37/256, 1.0));
     let bowspritT = new Transform(vec3(2.0, 0.5, 0.0), vec3(1.5, 0.5, 0.5), 0.0);
     bowspritT.rotate(10);
@@ -136,13 +149,6 @@ function createPirateShip() {
     ship.addChild(cannonball);
 
     objects.push(ship);
-}
-
-function createSail() {
-    let sailR = new Renderable(CUBE_VERTS, vec4(1.0, 1.0, 1.0, 1.0));
-    let sailT = new Transform(vec3(0.35, 3.0, 0.0), vec3(0.1, 2.25, 2.25), 0.0);
-
-    ship.addChild(new Obj(sailR, sailT, ship));
 }
 
 
@@ -181,7 +187,7 @@ function animate()
     let r1 = rotateX(Math.sin(theta) * 5);
     let r2 = rotateZ(Math.sin(theta) * 5);
 
-    ship.trans.setRotMat(mult(r1, r2));
+    ship.trans.setRotMat(mult(mult(r1, r2), rotateY(0)));
     ship.trans.move(vec3(0.0, Math.cos(theta-2.0)/500, 0.0));
 
     cannon.trans.setRotMat(mult(rotateZ(-pitch), rotateX(angle)));

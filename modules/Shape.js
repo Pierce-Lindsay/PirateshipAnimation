@@ -76,6 +76,52 @@ function createCube()
     return [vertices, colors];
 }
 
+//Creates a series of stacked cubes
+function createPrism() {
+
+    let cuboids = 8;
+
+    let TLB = vec4(-0.5, 1.0, 0.5, 1.0)
+    let TRB = vec4(0.5, 1.0, 0.5, 1.0)
+    let BRB = vec4(0.5, 0.0, 0.5, 1.0)
+    let BLB = vec4(-0.5, 0.0, 0.5, 1.0)
+
+    let TLF = vec4(-0.5, 1.0, -0.5, 1.0)
+    let TRF = vec4(0.5, 1.0, -0.5, 1.0)
+    let BRF = vec4(0.5, 0.0, -0.5, 1.0)
+    let BLF = vec4(-0.5, 0.0, -0.5, 1.0)
+
+    let vertices = [];
+
+    vertices = vertices.concat(square([BRB, BRF, BLF, BLB]));
+
+    for(let i = 0; i < cuboids; i++) {
+
+        if (i > 0) {
+            TLB = add(TLB, vec4(0.0, 1, 0.0, 0.0));
+            TRB = add(TRB, vec4(0.0, 1, 0.0, 0.0));
+            BRB = add(BRB, vec4(0.0, 1, 0.0, 0.0));
+            BLB = add(BLB, vec4(0.0, 1, 0.0, 0.0));
+            TLF = add(TLF, vec4(0.0, 1, 0.0, 0.0));
+            TRF = add(TRF, vec4(0.0, 1, 0.0, 0.0));
+            BRF = add(BRF, vec4(0.0, 1, 0.0, 0.0));
+            BLF = add(BLF, vec4(0.0, 1, 0.0, 0.0));
+        }
+
+        vertices = vertices.concat(square([TLB, TRB, BRB, BLB]));
+        vertices = vertices.concat(square([BLB, BLF, TLF, TLB]));
+        vertices = vertices.concat(square([TRB, TRF, BRF, BRB]));
+        vertices = vertices.concat(square([BRF, TRF, TLF, BLF]));
+    }
+
+    vertices = vertices.concat(square([TLB, TLF, TRF, TRB]));
+    //vertices = vertices.concat(square([TLB, TRB, BRB, BLB]));
+
+    return vertices;
+}
+
+
+//Creates a vertical, openface cyclinder who's bottom face is at 0
 function createCylinder() {
 
     let points = 32;
@@ -109,6 +155,7 @@ function createCylinder() {
     return [vertices, inverse];
 }
 
+//Creates a circle
 function createBall() {
     const r = 0.05;
     const slices = 20;
@@ -304,5 +351,5 @@ class Spline
 }
 
 
-export{ square, createCube, createCylinder, createBall, Spline, convertFromEulertoQuanterion , slerp}
+export{ square, createCube, createCylinder, createBall, createPrism, Spline, convertFromEulertoQuanterion , slerp}
 
