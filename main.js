@@ -82,7 +82,16 @@ function genCloud(camPos, proj, beforeStart = false)
 
 
 let ship = null;
-let cannon = null;
+let shipSpline = new Spline(3.0, [[0.0, 0.0, 0.0], [0.0, 0.5, 0.0], [0.0, Math.sqrt(3) / 2, 0.0], 
+                                    [0.0, 1.0, 0.0], [0.0, Math.sqrt(3) / 2, 0.0], [0.0, 0.5, 0.0],
+                                    [0.0, 0.0, 0.0], [0.0, -0.5, 0.0], [0.0, -Math.sqrt(3) / 2, 0.0],
+                                    [0.0, -1.0, 0.0], [0.0, -Math.sqrt(3) / 2, 0.0], [0.0, -0.5, 0.0], 
+                                    [0.0, 0.2, 0.0]], 
+                                [[0.0, 0.0, 7.0], [-5.0, 0.0, -7.0], [0.0, 0.0, 7.0],
+                                [5.0, 0.0, -7.0], [0.0, 0.0, 7.0], [-5.0, 0.0, -7.0],
+                                [0.0, 0.0, 7.0], [5.0, 0.0, -7.0], [0.0, 0.0, 7.0],
+                                [-5.0, 0.0, -7.0], [0.0, 0.0, 7.0], [5.0, 0.0, -7.0], 
+                                [0.0, 0.0, 7.0]]);
 
 let sail = null;
 let sailShader;
@@ -91,6 +100,7 @@ let cannonball = null;
 let ballVel = vec3();
 let ballLaunched = false;
 
+let cannon = null;
 let angle = 0.0;
 let pitch = 45.0;
 
@@ -240,7 +250,6 @@ function drawStuff()
         }
 }
 
-let theta = 0.0;
 
 //recursive draw function
 function animate()
@@ -287,17 +296,12 @@ function animate()
     }
 
 
-    moveCamAndNonAffectedObjects(deltaTime)
+    moveCamAndNonAffectedObjects(deltaTime);
 
 
     //Animate boat rocking
-    theta += 0.01;
-
-    let r1 = rotateX(Math.sin(theta) * 5);
-    let r2 = rotateZ(Math.sin(theta) * 5);
-
-    ship.trans.setRotMat(mult(mult(r1, r2), rotateY(0)));
-    ship.trans.move(vec3(0.0, Math.cos(theta-2.0)/700, 0.0));
+    ship.trans.setRotMat(shipSpline.getRotation(elapsedTime));
+    ship.trans.pos[1] = (shipSpline.getPosition(elapsedTime, false)[1] / 5) + 1;
 
     //Set cannon position
     cannon.trans.setRotMat(mult(rotateZ(-pitch), rotateX(angle)));
