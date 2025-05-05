@@ -82,6 +82,7 @@ function genCloud(camPos, proj, beforeStart = false)
 
 
 let ship = null;
+let useSpline = false;
 let shipSpline = new Spline(3.0, [[0.0, 0.0, 0.0], [0.0, 0.5, 0.0], [0.0, Math.sqrt(3) / 2, 0.0], 
                                      [0.0, 1.0, 0.0], [0.0, Math.sqrt(3) / 2, 0.0], [0.0, 0.5, 0.0],
                                      [0.0, 0.0, 0.0], [0.0, -0.5, 0.0], [0.0, -Math.sqrt(3) / 2, 0.0],
@@ -124,6 +125,9 @@ function initializeGlobals()
     initRenderer(gl, cam, projection)
     document.getElementById("angleSlider").addEventListener("input", e => angle = parseFloat(e.target.value));
     document.getElementById("pitchSlider").addEventListener("input", e => pitch = parseFloat(e.target.value));
+    document.getElementById("splineToggle").addEventListener("click", () => {
+        useSpline = !useSpline;
+    });
 
     canvas.addEventListener("click", () => {
         if (!ballLaunched) {
@@ -232,7 +236,6 @@ function createPirateShip() {
     ship.addChild(cannonball);
 
     objects.push(ship);
-    console.log(ship)
 }
 
 
@@ -301,8 +304,17 @@ function animate()
 
 
     //Animate boat rocking
-    ship.trans.setRotMat(shipSpline.getRotation(elapsedTime));
-    ship.trans.pos[1] = (shipSpline.getPosition(elapsedTime, false)[1] / 5) + 1;
+    if (useSpline) {
+        ship.trans.setRotMat(shipSpline.getRotation(elapsedTime));
+        ship.trans.pos[1] = (shipSpline.getPosition(elapsedTime, false)[1] / 5) + 1;
+    }
+    else {
+        let r1 = rotateX(Math.sin(elapsedTime) * 5);
+        let r2 = rotateZ(Math.sin(elapsedTime - 1) * 5);
+
+        ship.trans.setRotMat(mult(r1, r2));
+        ship.trans.pos[1] = (Math.cos(elapsedTime+2.0) / 7) + 1;
+    }
 
     //Set cannon position
     cannon.trans.setRotMat(mult(rotateZ(-pitch), rotateX(angle)));
