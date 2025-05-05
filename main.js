@@ -283,9 +283,7 @@ function animate()
     for(let i =0; i < fishies.length; i++)
     {
         fishies[i].update(cam.eye, elapsedTime, deltaTime);
-        //console.log(fishies[i].obj.trans.pos)
     }
-
 
     moveCamAndNonAffectedObjects(deltaTime)
 
@@ -317,7 +315,7 @@ function animate()
     //draw
     drawStuff();
 
-  // cleanUpObjects(cam.eye);
+   cleanUpObjects(cam.eye);
 }
 
 

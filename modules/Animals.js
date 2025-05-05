@@ -7,7 +7,6 @@ import {Transform, Projection} from "./Transformer.js";
 import {Obj, objects, deleteObject} from "./Object.js";
 import {Skeleton} from "./Skeleton.js";
 
-
 let WING_ROTATIONS =[
     [0, 0, 0, 0, 0],
     [20, 30, 50, 60, 80],
@@ -18,30 +17,6 @@ let WING_ROTATIONS =[
     [0, 0, 0, 0, 0]];
 
 
-
-/*
-let WING_ROTATIONS =[
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 45],
-    [0, 0, 0, 45, 45],
-    [0, 0, 45, 45, 45],
-    [0, 45, 45, 45, 45],
-    [45, 45, 45, 45, 45],
-    [45, 45, 45, 45, 0],
-    [45, 45, 45, 0, 0],
-    [45, 45, 0, 0,0],
-    [45, 0, 0, 0, -45],
-    [0, 0, 0, -45,-45],
-    [0, 0, -45, -45,-45],
-    [0, -45, -45, -45,-45],
-    [-45, -45,-45, -45, -45],
-    [-45,-45, -45, -45, 0],
-    [-45,-45, -45, 0, 0],
-    [-45,-45, 0, 0, 0],
-    [-45,0, 0, 0, 0],
-    [0,0, 0, 0, 0]]
-
- */
 
 const WING_SEG1_SCALE = vec3(0.6, 0.25, 0.4)
 const WING_SEG2_SCALE = vec3(1.1, 0.2, 0.6)
@@ -89,7 +64,7 @@ class Wing
 
         let cubeR = new Renderable(sCube[0], vec4(0.3, 0.3, 0.4, 1.0))
         //base joint position, doesnt really matter
-        let filler = vec3(0, 0, 0);
+        let filler = pos;
 
         //setup our square that will be transformed by bones
         let cubeBase = new Transform(vec3(0.5 * this.dir, 0, 0), WING_SEG1_SCALE, 0.0)
@@ -758,11 +733,11 @@ function spawnFish(proj, camPos)
         return;
     //fixed y value, rand z value, fixed z for now
     let x = genUniformRand(0, 1)
-    let pos = vec3(-3, -0.5, 0.6)
+    let pos = vec3(-3 + camPos[0], -0.5, 0.6)
     let dir = 1;
     if(x > 0.5)
     {
-        pos = vec3(3, -0.5, 0.6)
+        pos = vec3(3 + camPos[0], -0.5, 0.6)
         dir = -1
     }
 

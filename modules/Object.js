@@ -82,16 +82,6 @@ function deleteObject(id)
     {
         if(objects[i].id !== id)
             newObjects.push(objects[i]);
-        else
-        {
-            //console.log(objects[i])
-           // for(let j =0; j < objects[i].children.length; j++)
-           // {
-               // console.log(objects[i])
-              //  deleteObject(objects[i].children[j].id)
-           // }
-
-        }
     }
     objects = newObjects;
 
